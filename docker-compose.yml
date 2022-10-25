@@ -1,0 +1,34 @@
+# 每次重建容器记得要删除mongo db的数据，否则在创建容器时发现db中的数据已经初始化会报错
+
+version: '2.1'
+services:
+  yapi:
+    image: registry.cn-hangzhou.aliyuncs.com/edwardchan/yapi:1.10.2
+    container_name: yapi
+    environment:
+      - VERSION=1.10.2
+      - PORT=3000
+      - DB_SERVER=mongo
+      - DB_NAME=yapi
+      - DB_PORT=27017
+    # restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ../../yapi/log:/home/log 
+    depends_on:
+      - mongo
+    networks:
+      - back-net
+  mongo:
+    image: mongo:3.4
+    container_name: mongo
+    # restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ../../yapi/mongodb:/data/db
+    networks:
+      - back-net
+networks:
+  back-net:
